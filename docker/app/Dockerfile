@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+# 必要なパッケージをインストール
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    freetds-dev \
+    freetds-bin \
+    libkrb5-dev \
+    libssl-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 開発環境の依存関係をインストール
+COPY requirements-dev.txt .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# アプリケーションコードをコピー
+COPY . .
+
+# 起動コマンド
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
