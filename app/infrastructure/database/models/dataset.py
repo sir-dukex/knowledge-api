@@ -2,9 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, String, DateTime, JSON, Text
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+from app.infrastructure.database.connection import Base
 
 
 class DatasetModel(Base):

@@ -62,6 +62,13 @@ logs:
 shell:
 	$(COMPOSE_DEV) exec $(APP_DEV) /bin/bash
 
+
+# DB初期化
+.PHONY: init-db
+init-db:
+	python -c "from app.infrastructure.database.connection import init_db; init_db()"
+
+
 # Docker操作 - 本番環境
 .PHONY: build-prod up-prod down-prod restart-prod logs-prod shell-prod
 build-prod:
@@ -95,6 +102,18 @@ test-int:
 
 coverage:
 	$(COMPOSE_DEV) exec $(APP_DEV) pytest --cov=app --cov-report=term --cov-report=html tests/
+
+# Alembicマイグレーション
+.PHONY: alembic-init alembic-revision alembic-upgrade
+alembic-init:
+	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic init migrations
+
+alembic-revision:
+	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic revision --autogenerate -m "initial migration"
+
+alembic-upgrade:
+	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic upgrade head
+	
 
 # コード品質
 .PHONY: lint format

@@ -1,16 +1,15 @@
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-from sqlalchemy.ext.asyncio import AsyncSession
+from unittest.mock import Mock, MagicMock, patch
+from sqlalchemy.orm import Session
 from app.domain.entities.dataset import Dataset
 from app.infrastructure.repositories.dataset_repository_impl import DatasetRepositorySQLAlchemy
 from app.infrastructure.database.models.dataset import DatasetModel
 
 
 class TestDatasetRepositorySQLAlchemy:
-    @pytest.mark.asyncio
-    async def test_create(self):
+    def test_create(self):
         # モックセッションの準備
-        mock_session = AsyncMock(spec=AsyncSession)
+        mock_session = Mock(spec=Session)
         
         # テスト対象のリポジトリ
         repository = DatasetRepositorySQLAlchemy(mock_session)

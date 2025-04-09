@@ -1,15 +1,14 @@
 import pytest
 from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import Mock
 from app.domain.entities.dataset import Dataset
 from app.usecases.datasets.create_dataset import CreateDatasetUseCase
 
 
 class TestCreateDatasetUseCase:
-    @pytest.mark.asyncio
-    async def test_execute(self):
+    def test_execute(self):
         # モックの準備
-        mock_repo = AsyncMock()
+        mock_repo = Mock()
         mock_repo.create.return_value = Dataset(
             id="test-id",
             name="テストデータセット",
