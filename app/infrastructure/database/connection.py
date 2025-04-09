@@ -1,8 +1,8 @@
-import os
 import logging
+import os
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+
 def get_db():
     """DBセッションを取得"""
     db = SessionLocal()
@@ -29,10 +30,12 @@ def get_db():
     finally:
         db.close()
 
+
 def init_db():
     """データベースの初期化"""
     # モデル定義のインポートを行って、Base.metadata に登録されるようにする
-    from app.infrastructure.database import models  # models パッケージに dataset.py 等が含まれている前提
+    from app.infrastructure.database import models
+
     logger.debug("Registered tables: %s", list(Base.metadata.tables.keys()))
     print("Registered tables:", list(Base.metadata.tables.keys()))
     Base.metadata.create_all(bind=engine)

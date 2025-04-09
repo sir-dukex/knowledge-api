@@ -1,7 +1,7 @@
-import uuid
 import logging
-from typing import List, Optional
+import uuid
 from datetime import datetime
+from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -12,6 +12,7 @@ from app.infrastructure.database.models.dataset import DatasetModel
 
 # モジュール固有のロガーを定義（ログは英語で出力されます）
 logger = logging.getLogger(__name__)
+
 
 class DatasetRepositorySQLAlchemy(DatasetRepository):
     """SQLAlchemyを用いたデータセットリポジトリの実装"""
@@ -45,7 +46,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             description=dataset.description,
             meta_data=dataset.meta_data,
             created_at=dataset.created_at,
-            updated_at=dataset.updated_at
+            updated_at=dataset.updated_at,
         )
 
         # DBに保存
@@ -61,7 +62,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             description=db_dataset.description,
             meta_data=db_dataset.meta_data,
             created_at=db_dataset.created_at,
-            updated_at=db_dataset.updated_at
+            updated_at=db_dataset.updated_at,
         )
 
     def get_by_id(self, dataset_id: str) -> Optional[Dataset]:
@@ -89,7 +90,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             description=db_dataset.description,
             meta_data=db_dataset.meta_data,
             created_at=db_dataset.created_at,
-            updated_at=db_dataset.updated_at
+            updated_at=db_dataset.updated_at,
         )
 
     def list_datasets(self, skip: int = 0, limit: int = 100) -> List[Dataset]:
@@ -108,7 +109,12 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
         """
         logger.info("Start: Listing datasets with skip=%d, limit=%d", skip, limit)
         # ORDER BY句を追加してMSSQLの要求に対応（例: 作成日時でソート）
-        stmt = select(DatasetModel).order_by(DatasetModel.created_at).offset(skip).limit(limit)
+        stmt = (
+            select(DatasetModel)
+            .order_by(DatasetModel.created_at)
+            .offset(skip)
+            .limit(limit)
+        )
         result = self.session.execute(stmt)
         db_datasets = result.scalars().all()
         logger.info("Success: Retrieved %d datasets", len(db_datasets))
@@ -120,7 +126,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
                 description=db_dataset.description,
                 meta_data=db_dataset.meta_data,
                 created_at=db_dataset.created_at,
-                updated_at=db_dataset.updated_at
+                updated_at=db_dataset.updated_at,
             )
             for db_dataset in db_datasets
         ]
@@ -151,8 +157,9 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
         db_dataset.description = dataset.description
         db_dataset.meta_data = dataset.meta_data
         # 入力が None なら現在時刻を設定
-        db_dataset.updated_at = dataset.updated_at if dataset.updated_at else datetime.now()
-
+        db_dataset.updated_at = (
+            dataset.updated_at if dataset.updated_at else datetime.now()
+        )
 
         self.session.commit()
         self.session.refresh(db_dataset)
@@ -164,7 +171,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             description=db_dataset.description,
             meta_data=db_dataset.meta_data,
             created_at=db_dataset.created_at,
-            updated_at=db_dataset.updated_at
+            updated_at=db_dataset.updated_at,
         )
 
     def delete(self, dataset_id: str) -> bool:

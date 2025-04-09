@@ -1,6 +1,8 @@
-import pytest
 from datetime import datetime
 from unittest.mock import Mock
+
+import pytest
+
 from app.domain.entities.dataset import Dataset
 from app.usecases.datasets.create_dataset import CreateDatasetUseCase
 
@@ -15,19 +17,17 @@ class TestCreateDatasetUseCase:
             description="説明",
             meta_data={"key": "value"},
             created_at=datetime.now(),
-            updated_at=datetime.now()
+            updated_at=datetime.now(),
         )
-        
+
         # ユースケースの初期化
         usecase = CreateDatasetUseCase(mock_repo)
-        
+
         # 実行
         result = usecase.execute(
-            name="テストデータセット",
-            description="説明",
-            meta_data={"key": "value"}
+            name="テストデータセット", description="説明", meta_data={"key": "value"}
         )
-        
+
         # 検証
         assert result.id == "test-id"
         assert result.name == "テストデータセット"

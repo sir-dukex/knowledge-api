@@ -7,7 +7,7 @@ from app.interfaces.api.v1 import datasets
 app = FastAPI(
     title="Knowledge API",
     description="DifyライクなナレッジベースシステムのバックエンドAPI",
-    version="0.1.0"
+    version="0.1.0",
 )
 
 # CORSミドルウェアの設定

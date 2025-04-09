@@ -1,28 +1,35 @@
 from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app.domain.entities.dataset import Dataset
 
+
 # クライアントのフィクスチャ。FastAPI の TestClient を返します。
 @pytest.fixture(scope="module")
 def client():
     from app.main import app
+
     return TestClient(app)
 
 
 # CreateDatasetUseCase のパッチフィクスチャ（POST用）
 @pytest.fixture
 def patch_create_dataset_usecase():
-    with patch("app.interfaces.api.v1.datasets.CreateDatasetUseCase") as mock_usecase_class:
+    with patch(
+        "app.interfaces.api.v1.datasets.CreateDatasetUseCase"
+    ) as mock_usecase_class:
         yield mock_usecase_class
 
 
 # DatasetRepositorySQLAlchemy のパッチフィクスチャ（GET, PUT, DELETE 用）
 @pytest.fixture
 def patch_dataset_repository():
-    with patch("app.interfaces.api.v1.datasets.DatasetRepositorySQLAlchemy") as mock_repo_class:
+    with patch(
+        "app.interfaces.api.v1.datasets.DatasetRepositorySQLAlchemy"
+    ) as mock_repo_class:
         yield mock_repo_class
 
 
@@ -38,7 +45,7 @@ def test_create_dataset_api_interface(client, patch_create_dataset_usecase):
         description="Test description",
         meta_data={"key": "value"},
         created_at=datetime(2025, 4, 10, 0, 0),
-        updated_at=datetime(2025, 4, 10, 0, 0)
+        updated_at=datetime(2025, 4, 10, 0, 0),
     )
     # CreateDatasetUseCase のインスタンスのモック設定
     mock_usecase_instance = MagicMock()
@@ -48,14 +55,16 @@ def test_create_dataset_api_interface(client, patch_create_dataset_usecase):
     test_payload = {
         "name": "Test Dataset",
         "description": "Test description",
-        "meta_data": {"key": "value"}
+        "meta_data": {"key": "value"},
     }
-    
+
     # Act
     response = client.post("/api/v1/datasets/", json=test_payload)
-    
+
     # Assert
-    assert response.status_code == 201, f"Response status code was {response.status_code}"
+    assert (
+        response.status_code == 201
+    ), f"Response status code was {response.status_code}"
     data = response.json()
     assert data["id"] == "dummy-id"
     assert data["name"] == "Test Dataset"
@@ -75,7 +84,7 @@ def test_get_dataset_api_interface(client, patch_dataset_repository):
         description="Test description",
         meta_data={"key": "value"},
         created_at=datetime(2025, 4, 10, 0, 0),
-        updated_at=datetime(2025, 4, 10, 0, 0)
+        updated_at=datetime(2025, 4, 10, 0, 0),
     )
     mock_repo_instance = MagicMock()
     mock_repo_instance.get_by_id.return_value = dummy_dataset
@@ -83,9 +92,11 @@ def test_get_dataset_api_interface(client, patch_dataset_repository):
 
     # Act
     response = client.get("/api/v1/datasets/dummy-id")
-    
+
     # Assert
-    assert response.status_code == 200, f"Response status code was {response.status_code}"
+    assert (
+        response.status_code == 200
+    ), f"Response status code was {response.status_code}"
     data = response.json()
     assert data["id"] == "dummy-id"
     assert data["name"] == "Test Dataset"
@@ -107,7 +118,9 @@ def test_get_dataset_not_found_api_interface(client, patch_dataset_repository):
     response = client.get("/api/v1/datasets/nonexistent-id")
 
     # Assert
-    assert response.status_code == 404, f"Response status code was {response.status_code}"
+    assert (
+        response.status_code == 404
+    ), f"Response status code was {response.status_code}"
     data = response.json()
     assert data["detail"] == "Dataset not found"
 
@@ -124,7 +137,7 @@ def test_update_dataset_api_interface(client, patch_dataset_repository):
         description="Updated description",
         meta_data={"key": "updated_value"},
         created_at=datetime(2025, 4, 10, 0, 0),
-        updated_at=datetime(2025, 4, 10, 12, 0)
+        updated_at=datetime(2025, 4, 10, 12, 0),
     )
     mock_repo_instance = MagicMock()
     mock_repo_instance.update.return_value = dummy_updated
@@ -133,14 +146,16 @@ def test_update_dataset_api_interface(client, patch_dataset_repository):
     payload = {
         "name": "Updated Dataset",
         "description": "Updated description",
-        "meta_data": {"key": "updated_value"}
+        "meta_data": {"key": "updated_value"},
     }
 
     # Act
     response = client.put("/api/v1/datasets/dummy-id", json=payload)
 
     # Assert
-    assert response.status_code == 200, f"Response status code was {response.status_code}"
+    assert (
+        response.status_code == 200
+    ), f"Response status code was {response.status_code}"
     data = response.json()
     assert data["id"] == "dummy-id"
     assert data["name"] == "Updated Dataset"
@@ -163,8 +178,10 @@ def test_delete_dataset_api_interface_success(client, patch_dataset_repository):
     response = client.delete("/api/v1/datasets/dummy-id")
 
     # Assert: 204 No Content を返す
-    assert response.status_code == 204, f"Response status code was {response.status_code}"
-    assert response.content == b''  # レスポンスボディは空
+    assert (
+        response.status_code == 204
+    ), f"Response status code was {response.status_code}"
+    assert response.content == b""  # レスポンスボディは空
 
 
 def test_delete_dataset_api_interface_not_found(client, patch_dataset_repository):
@@ -182,7 +199,8 @@ def test_delete_dataset_api_interface_not_found(client, patch_dataset_repository
     response = client.delete("/api/v1/datasets/nonexistent-id")
 
     # Assert
-    assert response.status_code == 404, f"Response status code was {response.status_code}"
+    assert (
+        response.status_code == 404
+    ), f"Response status code was {response.status_code}"
     data = response.json()
     assert data["detail"] == "Dataset not found"
-

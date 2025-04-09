@@ -5,11 +5,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.infrastructure.database.connection import get_db
-from app.infrastructure.repositories.dataset_repository_impl import DatasetRepositorySQLAlchemy
+from app.infrastructure.repositories.dataset_repository_impl import (
+    DatasetRepositorySQLAlchemy,
+)
 from app.interfaces.schemas.dataset import (
-    DatasetCreate,    # 作成時の入力スキーマ
-    DatasetResponse, 
-    DatasetListResponse
+    DatasetCreate,
+    DatasetListResponse,
+    DatasetResponse,
 )
 from app.usecases.datasets.create_dataset import CreateDatasetUseCase
 
@@ -18,10 +20,10 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
 @router.post("/", response_model=DatasetResponse, status_code=201)
 def create_dataset(
-    dataset_create: DatasetCreate,
-    session: Annotated[Session, Depends(get_db)]
+    dataset_create: DatasetCreate, session: Annotated[Session, Depends(get_db)]
 ):
     """
     新規データセットを作成するエンドポイント
@@ -45,7 +47,7 @@ def create_dataset(
         dataset = usecase.execute(
             name=dataset_create.name,
             description=dataset_create.description,
-            meta_data=dataset_create.meta_data
+            meta_data=dataset_create.meta_data,
         )
         logger.info("Success: Dataset created with id=%s", dataset.id)
         return DatasetResponse(
@@ -54,7 +56,7 @@ def create_dataset(
             description=dataset.description,
             meta_data=dataset.meta_data,
             created_at=dataset.created_at,
-            updated_at=dataset.updated_at
+            updated_at=dataset.updated_at,
         )
     except Exception as e:
         logger.error("Error: Failed to create dataset. Error: %s", str(e))
@@ -63,9 +65,7 @@ def create_dataset(
 
 @router.get("/", response_model=DatasetListResponse)
 def list_datasets(
-    session: Annotated[Session, Depends(get_db)],
-    skip: int = 0,
-    limit: int = 100
+    session: Annotated[Session, Depends(get_db)], skip: int = 0, limit: int = 100
 ):
     """
     データセットの一覧を取得するエンドポイント
@@ -92,19 +92,16 @@ def list_datasets(
                 description=dataset.description,
                 meta_data=dataset.meta_data,
                 created_at=dataset.created_at,
-                updated_at=dataset.updated_at
+                updated_at=dataset.updated_at,
             )
             for dataset in datasets
         ],
-        total=total
+        total=total,
     )
 
 
 @router.get("/{dataset_id}", response_model=DatasetResponse)
-def get_dataset(
-    dataset_id: str,
-    session: Annotated[Session, Depends(get_db)]
-):
+def get_dataset(dataset_id: str, session: Annotated[Session, Depends(get_db)]):
     """
     指定IDのデータセット詳細を取得するエンドポイント
 
@@ -131,7 +128,7 @@ def get_dataset(
         description=dataset.description,
         meta_data=dataset.meta_data,
         created_at=dataset.created_at,
-        updated_at=dataset.updated_at
+        updated_at=dataset.updated_at,
     )
 
 
@@ -139,7 +136,7 @@ def get_dataset(
 def update_dataset(
     dataset_id: str,
     dataset_update: DatasetCreate,  # 必要に応じて DatasetUpdate スキーマを新たに定義すべき
-    session: Annotated[Session, Depends(get_db)]
+    session: Annotated[Session, Depends(get_db)],
 ):
     """
     指定IDのデータセットを更新するエンドポイント
@@ -161,13 +158,14 @@ def update_dataset(
         # 更新するためのドメインエンティティを作成
         # ※本来は更新専用のユースケースがあると望ましいが、ここでは repository.update() を直接呼び出す例です。
         from app.domain.entities.dataset import Dataset
+
         updated_entity = Dataset(
             id=dataset_id,
             name=dataset_update.name,
             description=dataset_update.description,
             meta_data=dataset_update.meta_data,
             created_at=None,  # 既存の作成日時をそのまま利用するため、更新用には不要（実装によりリポジトリで補完される）
-            updated_at=None
+            updated_at=None,
         )
         updated_dataset = dataset_repo.update(updated_entity)
         logger.info("Success: Updated dataset with id=%s", dataset_id)
@@ -177,18 +175,17 @@ def update_dataset(
             description=updated_dataset.description,
             meta_data=updated_dataset.meta_data,
             created_at=updated_dataset.created_at,
-            updated_at=updated_dataset.updated_at
+            updated_at=updated_dataset.updated_at,
         )
     except Exception as e:
-        logger.error("Error: Failed to update dataset with id=%s, error: %s", dataset_id, str(e))
+        logger.error(
+            "Error: Failed to update dataset with id=%s, error: %s", dataset_id, str(e)
+        )
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/{dataset_id}", status_code=204)
-def delete_dataset(
-    dataset_id: str,
-    session: Annotated[Session, Depends(get_db)]
-):
+def delete_dataset(dataset_id: str, session: Annotated[Session, Depends(get_db)]):
     """
     指定IDのデータセットを削除するエンドポイント
 
@@ -198,7 +195,7 @@ def delete_dataset(
 
     戻り値:
         204 No Content（削除成功時）
-        
+
     例外:
         HTTPException: 対象データセットが存在しない場合
     """
@@ -210,4 +207,3 @@ def delete_dataset(
         raise HTTPException(status_code=404, detail="Dataset not found")
     logger.info("Success: Deleted dataset with id=%s", dataset_id)
     return
-

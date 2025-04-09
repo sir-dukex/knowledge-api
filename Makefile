@@ -120,6 +120,9 @@ alembic-upgrade:
 lint:
 	$(COMPOSE_DEV) exec $(APP_DEV) flake8 app/ tests/
 
+sorting:
+	$(COMPOSE_DEV) exec $(APP_DEV) isort app/ tests/
+
 format:
 	$(COMPOSE_DEV) exec $(APP_DEV) black app/ tests/
 

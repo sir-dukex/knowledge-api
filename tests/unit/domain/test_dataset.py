@@ -1,5 +1,7 @@
-import pytest
 from datetime import datetime
+
+import pytest
+
 from app.domain.entities.dataset import Dataset
 
 
@@ -9,10 +11,10 @@ class TestDataset:
         name = "テストデータセット"
         description = "テスト用の説明"
         meta_data = {"key": "value"}
-        
+
         # 実行
         dataset = Dataset.create(name, description, meta_data)
-        
+
         # 検証
         assert dataset.name == name
         assert dataset.description == description

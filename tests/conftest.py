@@ -1,11 +1,14 @@
-import pytest
 import asyncio
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+
+import pytest
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+
 from app.infrastructure.database.models.dataset import Base
 
 # テスト用のインメモリSQLiteデータベース
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -13,6 +16,7 @@ def event_loop():
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
 
 @pytest.fixture(scope="session")
 async def engine():
@@ -24,6 +28,7 @@ async def engine():
     async with engine.begin() as conn:
         await conn.run_sync(Base.meta_data.drop_all)
     await engine.dispose()
+
 
 @pytest.fixture
 async def db_session(engine):
