@@ -1,6 +1,7 @@
 import uuid
 import logging
 from typing import List, Optional
+from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -149,7 +150,9 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
         db_dataset.name = dataset.name
         db_dataset.description = dataset.description
         db_dataset.meta_data = dataset.meta_data
-        db_dataset.updated_at = dataset.updated_at
+        # 入力が None なら現在時刻を設定
+        db_dataset.updated_at = dataset.updated_at if dataset.updated_at else datetime.now()
+
 
         self.session.commit()
         self.session.refresh(db_dataset)
@@ -186,4 +189,3 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
         self.session.commit()
         logger.info("Success: Deleted dataset with id=%s", dataset_id)
         return True
-

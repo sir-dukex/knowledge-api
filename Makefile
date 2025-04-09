@@ -66,7 +66,7 @@ shell:
 # DB初期化
 .PHONY: init-db
 init-db:
-	python -c "from app.infrastructure.database.connection import init_db; init_db()"
+	$(COMPOSE_DEV) exec $(APP_DEV) python -c "from app.infrastructure.database.connection import init_db; init_db()"
 
 
 # Docker操作 - 本番環境

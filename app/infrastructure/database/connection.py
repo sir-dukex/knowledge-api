@@ -1,7 +1,10 @@
 import os
+import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+logger = logging.getLogger(__name__)
 
 # 環境変数から接続情報を取得
 SERVER = os.getenv("AZURE_SQL_SERVER", "your-server.database.windows.net")
@@ -28,4 +31,8 @@ def get_db():
 
 def init_db():
     """データベースの初期化"""
+    # モデル定義のインポートを行って、Base.metadata に登録されるようにする
+    from app.infrastructure.database import models  # models パッケージに dataset.py 等が含まれている前提
+    logger.debug("Registered tables: %s", list(Base.metadata.tables.keys()))
+    print("Registered tables:", list(Base.metadata.tables.keys()))
     Base.metadata.create_all(bind=engine)
