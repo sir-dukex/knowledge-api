@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.infrastructure.database.connection import init_db
-from app.interfaces.api.v1 import datasets
+from app.interfaces.api.v1 import datasets, documents
 
 app = FastAPI(
     title="Knowledge API",
@@ -21,6 +21,7 @@ app.add_middleware(
 
 # ルーターの登録
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
+app.include_router(documents.router, prefix="/api/v1/documents", tags=["documents"])
 
 
 @app.on_event("startup")
