@@ -1,0 +1,39 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  # uvicorn用のフォーマット
+  f_uvicorn:
+    format: '[UVICORN_LOG] [%(asctime)s] %(levelname)s in %(module)s: %(name)s %(message)s'
+  # カスタムログ用のフォーマット    
+  f_custom:
+    format: "[MODULE_LOG] [%(asctime)s] %(levelname)s in %(module)s: %(name)s (%(funcName)s[%(lineno)s]) %(message)s"
+handlers:
+  # uvicornで備わっているlogを標準出力するハンドラ
+  h_console_uvicorn:
+    class: logging.StreamHandler
+    formatter: f_uvicorn
+    stream: ext://sys.stdout
+  # 自分で設定したカスタムログを標準出力するハンドラ
+  h_console_custom:
+    class: logging.StreamHandler
+    formatter: f_custom
+    stream: ext://sys.stdout
+loggers:
+  # uvicornで備わっているログはpropagateをtrueにしてroot設定を引継ぐ
+  uvicorn.error:
+    level: DEBUG
+    handlers: ['h_console_uvicorn']
+    propagate: true
+  uvicorn.access:
+    level: DEBUG
+    handlers: ['h_console_uvicorn']
+    propagate: true
+  # カスタムログでは、標準出力とlogs/custom/custom.logへ出力
+  app:
+    level: DEBUG
+    handlers: ['h_console_custom']
+    propagate: false
+  # uvicornでは標準出力とlogs/uvicorn/uvicorn.logへ出力 (propagateされて来る)
+root:
+  level: INFO
+  handlers: ['h_console_uvicorn']

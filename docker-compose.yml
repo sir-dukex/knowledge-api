@@ -17,4 +17,4 @@ services:
       - AZURE_SEARCH_ENDPOINT=${AZURE_SEARCH_ENDPOINT}
       - AZURE_SEARCH_KEY=${AZURE_SEARCH_KEY}
       - AZURE_SEARCH_INDEX_NAME=${AZURE_SEARCH_INDEX_NAME}
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-config /app/config/logging_config.yml

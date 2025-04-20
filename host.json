@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "maxTelemetryItemsPerSecond" : 5
+      }
+    }
+  },
+  "customHandler": {
+    "description": {
+      "defaultExecutablePath": "uvicorn",
+      "workingDirectory": "/app",
+      "arguments": [ "app.main:app", "--host", "0.0.0.0", "--port", "80" ]
+    },
+    "enableForwardingHttpRequest": true
+  }
+}
