@@ -4,7 +4,9 @@
 COMPOSE_DEV = docker-compose
 COMPOSE_PROD = docker-compose -f docker-compose.prod.yml
 APP_DEV = knowledge-api
-APP_PROD = knowledge-api
+APP_PROD = knowledge-api-prod
+ACR_NAME = acryakkibetadev02
+RG_NAME = rg-yakki-beta-dev02
 
 # デフォルトのターゲット
 .PHONY: help
@@ -42,6 +44,11 @@ setup:
 		echo "環境設定ファイル(.env)はすでに存在します。"; \
 	fi
 
+# Azure CLIのログイン
+.PHONY: login
+login:
+	bash scripts/switch_azure_subscription.sh
+
 # Docker操作 - 開発環境
 .PHONY: build up down restart logs shell
 build:
@@ -70,9 +77,17 @@ init-db:
 
 
 # Docker操作 - 本番環境
-.PHONY: build-prod up-prod down-prod restart-prod logs-prod shell-prod
+.PHONY: build-prod build-prod-amd64 build-prod-amd64-webapp up-prod down-prod restart-prod logs-prod shell-prod
 build-prod:
 	$(COMPOSE_PROD) build
+
+# Apple Silicon用: amd64イメージを直接ビルド
+build-prod-amd64:
+	docker build --platform linux/amd64 -t $(APP_PROD) -f docker/app/Dockerfile .
+
+# Apple Silicon用: amd64イメージを直接ビルド (Webアプリ用)
+build-prod-amd64-webapp:
+	docker build --platform linux/amd64 -t $(APP_PROD) -f docker/app/Dockerfile.webapp .
 
 up-prod:
 	$(COMPOSE_PROD) up -d
@@ -88,6 +103,21 @@ logs-prod:
 
 shell-prod:
 	$(COMPOSE_PROD) exec $(APP_PROD) /bin/bash
+
+
+# Dockerイメージのビルドとプッシュ - 本番環境
+.PHONY: build-prod acr-login push-prod
+tag-prod:
+	docker tag $(APP_PROD) $(ACR_NAME).azurecr.io/$(APP_PROD):latest
+
+acr-login:
+	@loginServer=$$(az acr show --name $(ACR_NAME) --resource-group $(RG_NAME) --query "loginServer" --output tsv); \
+	adminUser=$$(az acr credential show --name $(ACR_NAME) --resource-group $(RG_NAME) --query "username" --output tsv); \
+	adminPassword=$$(az acr credential show --name $(ACR_NAME) --resource-group $(RG_NAME) --query "passwords[0].value" --output tsv); \
+	echo $$adminPassword | docker login $$loginServer -u $$adminUser --password-stdin
+
+push-prod: tag-prod acr-login
+	docker push $(ACR_NAME).azurecr.io/$(APP_PROD):latest
 
 # テスト
 .PHONY: test test-unit test-int coverage
@@ -125,6 +155,11 @@ sorting:
 
 format:
 	$(COMPOSE_DEV) exec $(APP_DEV) black app/ tests/
+
+# App Service環境変数一括登録
+.PHONY: set-appservice-env
+set-appservice-env:
+	bash scripts/set_appservice_env.sh
 
 # クリーンアップ
 .PHONY: clean clean-all
