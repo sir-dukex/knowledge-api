@@ -175,3 +175,9 @@ clean:
 
 clean-all: down down-prod
 	docker system prune -af --volumes
+
+
+# OpenAPIドキュメントの取得
+.PHONY: openapi
+openapi:
+	curl -X GET "https://knowledge-func.azurewebsites.net/openapi.json" | jq . > openapi.json

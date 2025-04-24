@@ -62,6 +62,21 @@ variable "azure_sql_password" {
   description = "Azure SQLパスワード"
 }
 
+# Log Analytics Workspace
+variable "log_analytics_workspace_name" {
+  type        = string
+  description = "Log Analytics Workspace名"
+  default     = "knowledge-logs"
+}
+
+resource "azurerm_log_analytics_workspace" "log_analytics" {
+  name                = var.log_analytics_workspace_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
 # Premiumプラン(EP1) - カスタムコンテナは通常Premium or Dedicatedが必要
 resource "azurerm_service_plan" "function_plan" {
   name                = "knowledge-plan"
@@ -90,6 +105,7 @@ resource "azurerm_application_insights" "app_insights" {
   location            = var.location
   resource_group_name = var.resource_group_name
   application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.log_analytics.id
 }
 
 resource "azurerm_linux_function_app" "my_func_app" {
@@ -121,6 +137,7 @@ resource "azurerm_linux_function_app" "my_func_app" {
     "FUNCTIONS_CUSTOMHANDLER_PORT"  = "8000"
     "WEBSITE_RUN_FROM_PACKAGE"      = "0"
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.app_insights.instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app_insights.connection_string
     "AZURE_SQL_SERVER"              = var.azure_sql_server
     "AZURE_SQL_DATABASE"            = var.azure_sql_database
     "AZURE_SQL_USER"                = var.azure_sql_user
