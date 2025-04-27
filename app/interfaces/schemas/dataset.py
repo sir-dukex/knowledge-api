@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+from app.interfaces.schemas.base import CustomBaseModel
 
 
-class DatasetCreate(BaseModel):
+class DatasetCreate(CustomBaseModel):
     """
     データセット作成リクエスト
 
@@ -21,7 +22,7 @@ class DatasetCreate(BaseModel):
     is_active: bool = Field(True, description="有効フラグ（True:有効, False:無効）")
 
 
-class DatasetUpdate(BaseModel):
+class DatasetUpdate(CustomBaseModel):
     """
     データセット更新リクエスト
 
@@ -38,7 +39,7 @@ class DatasetUpdate(BaseModel):
     is_active: Optional[bool] = Field(None, description="有効フラグ（True:有効, False:無効）")
 
 
-class DatasetResponse(BaseModel):
+class DatasetResponse(CustomBaseModel):
     """
     データセットレスポンス
 
@@ -61,7 +62,7 @@ class DatasetResponse(BaseModel):
     updated_at: datetime
 
 
-class DatasetListResponse(BaseModel):
+class DatasetListResponse(CustomBaseModel):
     """データセット一覧レスポンス"""
 
     items: List[DatasetResponse]

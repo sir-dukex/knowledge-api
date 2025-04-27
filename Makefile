@@ -83,10 +83,10 @@ build-prod:
 
 # Apple Silicon用: amd64イメージを直接ビルド
 build-prod-amd64:
-	docker build --platform linux/amd64 -t $(APP_PROD) -f docker/app/Dockerfile .
+	docker build --platform linux/amd64 -t $(APP_PROD) -f docker/app/Dockerfile.prod .
 
 # Apple Silicon用: amd64イメージを直接ビルド (Webアプリ用)
-build-prod-amd64-webapp:
+build-prod-amd64:
 	docker build --platform linux/amd64 -t $(APP_PROD) -f docker/app/Dockerfile.webapp .
 
 up-prod:

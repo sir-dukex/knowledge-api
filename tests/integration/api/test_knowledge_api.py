@@ -66,15 +66,15 @@ def test_create_knowledge(client):
     dataset = create_dataset(client, "KnowledgeCreateCase")
     document = create_document(client, dataset_id=dataset["id"])
     knowledge = create_knowledge(client, document_id=document["id"], sequence=1)
-    assert knowledge["document_id"] == document["id"]
+    assert knowledge["documentId"] == document["id"]
     assert knowledge["sequence"] == 1
-    assert "Test knowledge text" in knowledge["knowledge_text"]
-    assert knowledge["meta_data"]["test_key"] == "test_value"
-    assert knowledge["is_active"] is True
+    assert "Test knowledge text" in knowledge["knowledgeText"]
+    assert knowledge["metaData"]["test_key"] == "test_value"
+    assert knowledge["isActive"] is True
 
-    # is_active=Falseで作成
+    # isActive=Falseで作成
     knowledge2 = create_knowledge(client, document_id=document["id"], sequence=2, is_active=False)
-    assert knowledge2["is_active"] is False
+    assert knowledge2["isActive"] is False
 
 
 def test_get_knowledge(client):
@@ -91,7 +91,7 @@ def test_get_knowledge(client):
     get_data = resp.json()
     assert get_data["id"] == knowledge_id
     assert get_data["sequence"] == 2
-    assert get_data["is_active"] is True
+    assert get_data["isActive"] is True
 
 
 def test_list_knowledges(client):
@@ -112,7 +112,7 @@ def test_list_knowledges(client):
     assert set(sequences) == {1, 2, 3}
     # is_activeの値も検証
     for i, item in enumerate(sorted(data["items"], key=lambda x: x["sequence"]), 1):
-        assert item["is_active"] == (i % 2 == 0)
+        assert item["isActive"] == (i % 2 == 0)
 
 
 def test_update_knowledge(client):
@@ -135,9 +135,9 @@ def test_update_knowledge(client):
     updated = resp.json()
     assert updated["id"] == knowledge_id
     assert updated["sequence"] == 10
-    assert updated["knowledge_text"] == "Updated knowledge text"
-    assert updated["meta_data"]["updated"] is True
-    assert updated["is_active"] is False
+    assert updated["knowledgeText"] == "Updated knowledge text"
+    assert updated["metaData"]["updated"] is True
+    assert updated["isActive"] is False
 
 
 def test_delete_knowledge(client):

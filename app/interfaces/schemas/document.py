@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import Field
+from app.interfaces.schemas.base import CustomBaseModel
 
 
-class DocumentCreate(BaseModel):
+class DocumentCreate(CustomBaseModel):
     """
     ドキュメント作成用の入力スキーマ
 
@@ -20,7 +21,7 @@ class DocumentCreate(BaseModel):
     is_active: bool = Field(True, description="有効フラグ（True:有効, False:無効）")
 
 
-class DocumentUpdate(BaseModel):
+class DocumentUpdate(CustomBaseModel):
     """
     ドキュメント更新用の入力スキーマ
 
@@ -35,7 +36,7 @@ class DocumentUpdate(BaseModel):
     is_active: Optional[bool] = Field(None, description="有効フラグ（True:有効, False:無効）")
 
 
-class DocumentResponse(BaseModel):
+class DocumentResponse(CustomBaseModel):
     """
     ドキュメント出力用のレスポンススキーマ
 
@@ -61,12 +62,9 @@ class DocumentResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
 
 
-class DocumentListResponse(BaseModel):
+class DocumentListResponse(CustomBaseModel):
     """
     複数のドキュメント取得用レスポンススキーマ
 

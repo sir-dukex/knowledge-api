@@ -60,14 +60,14 @@ def test_create_document_with_existing_dataset(client):
 
     # 2) そのdatasetに紐づくDocumentを作成
     doc_resp = create_document(client, dataset_id=dataset_id)
-    assert doc_resp["dataset_id"] == dataset_id
+    assert doc_resp["datasetId"] == dataset_id
     assert "Test Document" in doc_resp["title"]
-    assert doc_resp["meta_data"]["test_key"] == "test_value"
-    assert doc_resp["is_active"] is True
+    assert doc_resp["metaData"]["test_key"] == "test_value"
+    assert doc_resp["isActive"] is True
 
-    # is_active=Falseで作成
+    # isActive=Falseで作成
     doc_resp2 = create_document(client, dataset_id=dataset_id, is_active=False)
-    assert doc_resp2["is_active"] is False
+    assert doc_resp2["isActive"] is False
 
 
 def test_create_document_with_no_dataset(client):
@@ -80,17 +80,17 @@ def test_create_document_with_no_dataset(client):
 
     # Documentが正常に返ってきたのでステータスコード201は通過済み
     # dataset_id が自動生成されていることを確認
-    auto_dataset_id = doc_resp["dataset_id"]
+    auto_dataset_id = doc_resp["datasetId"]
     assert auto_dataset_id is not None and auto_dataset_id != ""
 
     # 念のため、Documentの内容も確認
     assert "Test Document" in doc_resp["title"]
-    assert doc_resp["meta_data"]["test_key"] == "test_value"
-    assert doc_resp["is_active"] is True
+    assert doc_resp["metaData"]["test_key"] == "test_value"
+    assert doc_resp["isActive"] is True
 
-    # is_active=Falseで作成
+    # isActive=Falseで作成
     doc_resp2 = create_document(client, dataset_id=None, is_active=False)
-    assert doc_resp2["is_active"] is False
+    assert doc_resp2["isActive"] is False
 
 
 def test_get_document(client):
@@ -108,7 +108,7 @@ def test_get_document(client):
     get_data = resp.json()
     assert get_data["id"] == doc_id
     assert get_data["title"] == doc_resp["title"]
-    assert get_data["is_active"] is True
+    assert get_data["isActive"] is True
 
 
 def test_update_document(client):
@@ -131,8 +131,8 @@ def test_update_document(client):
     assert updated["id"] == doc_id
     assert updated["title"] == "Updated Title"
     assert updated["content"] == "Updated content"
-    assert updated["meta_data"]["updated"] is True
-    assert updated["is_active"] is False
+    assert updated["metaData"]["updated"] is True
+    assert updated["isActive"] is False
 
 
 def test_delete_document(client):

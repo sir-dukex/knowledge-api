@@ -18,11 +18,11 @@ def test_create_dataset():
     response_data = response.json()
     assert response_data["name"] == test_data["name"]
     assert response_data["description"] == test_data["description"]
-    assert response_data["meta_data"] == test_data["meta_data"]
-    assert response_data["is_active"] is True
+    assert response_data["metaData"] == test_data["meta_data"]
+    assert response_data["isActive"] is True
     assert "id" in response_data
 
-    # is_active=Falseで作成
+    # isActive=Falseで作成
     test_data2 = {
         "name": "Inactive Dataset",
         "description": "Inactive",
@@ -32,7 +32,7 @@ def test_create_dataset():
     response2 = client.post("/api/v1/datasets/", json=test_data2)
     assert response2.status_code == 201
     response_data2 = response2.json()
-    assert response_data2["is_active"] is False
+    assert response_data2["isActive"] is False
 
 
 def test_list_datasets_and_get_dataset():
@@ -57,7 +57,7 @@ def test_list_datasets_and_get_dataset():
     # 作成したデータが一覧に含まれているか確認
     matching = [ds for ds in list_data["items"] if ds["id"] == dataset_id]
     assert len(matching) == 1, "一覧に作成したデータが存在するはずです"
-    assert matching[0]["is_active"] is True
+    assert matching[0]["isActive"] is True
 
     # 個別取得のテスト (正常系)
     get_response = client.get(f"/api/v1/datasets/{dataset_id}")
@@ -66,8 +66,8 @@ def test_list_datasets_and_get_dataset():
     assert get_data["id"] == dataset_id
     assert get_data["name"] == test_data["name"]
     assert get_data["description"] == test_data["description"]
-    assert get_data["meta_data"] == test_data["meta_data"]
-    assert get_data["is_active"] is True
+    assert get_data["metaData"] == test_data["meta_data"]
+    assert get_data["isActive"] is True
 
 
 def test_get_dataset_not_found():
@@ -102,8 +102,8 @@ def test_update_dataset():
     assert updated_data["id"] == dataset_id
     assert updated_data["name"] == "Dataset Updated"
     assert updated_data["description"] == "After update"
-    assert updated_data["meta_data"] == {"info": "updated"}
-    assert updated_data["is_active"] is False
+    assert updated_data["metaData"] == {"info": "updated"}
+    assert updated_data["isActive"] is False
 
     # GET で更新結果を確認
     get_resp = client.get(f"/api/v1/datasets/{dataset_id}")
@@ -111,8 +111,8 @@ def test_update_dataset():
     get_data = get_resp.json()
     assert get_data["name"] == "Dataset Updated"
     assert get_data["description"] == "After update"
-    assert get_data["meta_data"] == {"info": "updated"}
-    assert get_data["is_active"] is False
+    assert get_data["metaData"] == {"info": "updated"}
+    assert get_data["isActive"] is False
 
 
 def test_delete_dataset():

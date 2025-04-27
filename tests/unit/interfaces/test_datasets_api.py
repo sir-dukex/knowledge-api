@@ -69,7 +69,7 @@ def test_create_dataset_api_interface(client, patch_create_dataset_usecase):
     assert data["id"] == "dummy-id"
     assert data["name"] == "Test Dataset"
     assert data["description"] == "Test description"
-    assert data["meta_data"] == {"key": "value"}
+    assert data["metaData"] == {"key": "value"}
 
 
 def test_get_dataset_api_interface(client, patch_dataset_repository):
@@ -101,7 +101,7 @@ def test_get_dataset_api_interface(client, patch_dataset_repository):
     assert data["id"] == "dummy-id"
     assert data["name"] == "Test Dataset"
     assert data["description"] == "Test description"
-    assert data["meta_data"] == {"key": "value"}
+    assert data["metaData"] == {"key": "value"}
 
 
 def test_get_dataset_not_found_api_interface(client, patch_dataset_repository):
@@ -160,7 +160,7 @@ def test_update_dataset_api_interface(client, patch_dataset_repository):
     assert data["id"] == "dummy-id"
     assert data["name"] == "Updated Dataset"
     assert data["description"] == "Updated description"
-    assert data["meta_data"] == {"key": "updated_value"}
+    assert data["metaData"] == {"key": "updated_value"}
 
 
 def test_delete_dataset_api_interface_success(client, patch_dataset_repository):

@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import Field
+from app.interfaces.schemas.base import CustomBaseModel
 
 
-class KnowledgeBase(BaseModel):
+class KnowledgeBase(CustomBaseModel):
     """
     Knowledge（ナレッジ情報）の共通スキーマ
 
@@ -28,7 +29,7 @@ class KnowledgeCreate(KnowledgeBase):
     pass
 
 
-class KnowledgeUpdate(BaseModel):
+class KnowledgeUpdate(CustomBaseModel):
     """
     Knowledge更新用スキーマ
 
@@ -53,7 +54,7 @@ class KnowledgeResponse(KnowledgeBase):
     updated_at: datetime = Field(..., description="更新日時")
 
 
-class KnowledgeListResponse(BaseModel):
+class KnowledgeListResponse(CustomBaseModel):
     """Knowledge一覧レスポンススキーマ"""
 
     items: List[KnowledgeResponse]
