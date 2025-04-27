@@ -15,7 +15,7 @@ class UpdateDocumentUseCase:
         self.document_repository = document_repository
 
     def execute(
-        self, document_id: str, title: str, content: str, meta_data: dict
+        self, document_id: str, title: str, content: str, meta_data: dict, is_active: bool = True
     ) -> Document:
         """
         ドキュメントを更新する
@@ -25,6 +25,7 @@ class UpdateDocumentUseCase:
             title (str): 更新するタイトル
             content (str): 更新する本文
             meta_data (dict): 更新するメタ情報
+            is_active (bool): 有効フラグ（True:有効, False:無効）
 
         Returns:
             Document: 更新後のドキュメントエンティティ
@@ -38,6 +39,7 @@ class UpdateDocumentUseCase:
             title=title,
             content=content,
             meta_data=meta_data,
+            is_active=is_active,
             created_at=None,  # 既存の作成日時は repository 側で補完（もしくは既存値をそのまま利用）
             updated_at=datetime.now(),
         )

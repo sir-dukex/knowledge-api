@@ -29,12 +29,13 @@ def create_dataset(client, name: str) -> dict:
     return resp.json()  # { "id": "...", "name": "...", ... }
 
 
-def create_document(client, dataset_id: str = None) -> dict:
+def create_document(client, dataset_id: str = None, is_active: bool = True) -> dict:
     """
     ドキュメントを作成して結果を返すヘルパー関数
 
     dataset_id が指定されていなければ None を渡すことで
     DocumentCreateUseCase 内で自動的に Dataset を作成する。
+    is_activeは明示的に指定可能
     """
     payload = {
         # 存在しない or None でもキーは送ってみる
@@ -42,6 +43,7 @@ def create_document(client, dataset_id: str = None) -> dict:
         "title": f"Test Document {uuid4()}",
         "content": "This is a test document content.",
         "meta_data": {"test_key": "test_value"},
+        "is_active": is_active,
     }
     resp = client.post("/api/v1/documents/", json=payload)
     assert resp.status_code == 201
@@ -61,6 +63,11 @@ def test_create_document_with_existing_dataset(client):
     assert doc_resp["dataset_id"] == dataset_id
     assert "Test Document" in doc_resp["title"]
     assert doc_resp["meta_data"]["test_key"] == "test_value"
+    assert doc_resp["is_active"] is True
+
+    # is_active=Falseで作成
+    doc_resp2 = create_document(client, dataset_id=dataset_id, is_active=False)
+    assert doc_resp2["is_active"] is False
 
 
 def test_create_document_with_no_dataset(client):
@@ -79,6 +86,11 @@ def test_create_document_with_no_dataset(client):
     # 念のため、Documentの内容も確認
     assert "Test Document" in doc_resp["title"]
     assert doc_resp["meta_data"]["test_key"] == "test_value"
+    assert doc_resp["is_active"] is True
+
+    # is_active=Falseで作成
+    doc_resp2 = create_document(client, dataset_id=None, is_active=False)
+    assert doc_resp2["is_active"] is False
 
 
 def test_get_document(client):
@@ -96,6 +108,7 @@ def test_get_document(client):
     get_data = resp.json()
     assert get_data["id"] == doc_id
     assert get_data["title"] == doc_resp["title"]
+    assert get_data["is_active"] is True
 
 
 def test_update_document(client):
@@ -110,6 +123,7 @@ def test_update_document(client):
         "title": "Updated Title",
         "content": "Updated content",
         "meta_data": {"updated": True},
+        "is_active": False,
     }
     resp = client.put(f"/api/v1/documents/{doc_id}", json=update_payload)
     assert resp.status_code == 200
@@ -118,6 +132,7 @@ def test_update_document(client):
     assert updated["title"] == "Updated Title"
     assert updated["content"] == "Updated content"
     assert updated["meta_data"]["updated"] is True
+    assert updated["is_active"] is False
 
 
 def test_delete_document(client):

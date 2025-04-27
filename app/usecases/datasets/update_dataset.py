@@ -15,7 +15,7 @@ class UpdateDatasetUseCase:
         self.dataset_repository = dataset_repository
 
     def execute(
-        self, dataset_id: str, name: str, description: str, meta_data: dict
+        self, dataset_id: str, name: str, description: str, meta_data: dict, is_active: bool = True
     ) -> Dataset:
         """
         データセットを更新する
@@ -25,6 +25,7 @@ class UpdateDatasetUseCase:
             name (str): 更新する新しい名前
             description (str): 更新する説明
             meta_data (dict): 更新するメタデータ
+            is_active (bool): 有効フラグ（True:有効, False:無効）
 
         Returns:
             Dataset: 更新後のデータセットエンティティ
@@ -36,6 +37,7 @@ class UpdateDatasetUseCase:
             name=name,
             description=description,
             meta_data=meta_data,
+            is_active=is_active,
             created_at=None,  # repository 実装側で既存の created_at を反映
             updated_at=datetime.now(),
         )

@@ -45,6 +45,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             name=dataset.name,
             description=dataset.description,
             meta_data=dataset.meta_data,
+            is_active=dataset.is_active,
             created_at=dataset.created_at,
             updated_at=dataset.updated_at,
         )
@@ -61,6 +62,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             name=db_dataset.name,
             description=db_dataset.description,
             meta_data=db_dataset.meta_data,
+            is_active=db_dataset.is_active,
             created_at=db_dataset.created_at,
             updated_at=db_dataset.updated_at,
         )
@@ -89,6 +91,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             name=db_dataset.name,
             description=db_dataset.description,
             meta_data=db_dataset.meta_data,
+            is_active=db_dataset.is_active,
             created_at=db_dataset.created_at,
             updated_at=db_dataset.updated_at,
         )
@@ -108,7 +111,6 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             MSSQLではOFFSETやLIMIT句を使用する場合、ORDER BY句が必須です。
         """
         logger.info("Start: Listing datasets with skip=%d, limit=%d", skip, limit)
-        # ORDER BY句を追加してMSSQLの要求に対応（例: 作成日時でソート）
         stmt = (
             select(DatasetModel)
             .order_by(DatasetModel.created_at)
@@ -125,6 +127,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
                 name=db_dataset.name,
                 description=db_dataset.description,
                 meta_data=db_dataset.meta_data,
+                is_active=db_dataset.is_active,
                 created_at=db_dataset.created_at,
                 updated_at=db_dataset.updated_at,
             )
@@ -156,6 +159,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
         db_dataset.name = dataset.name
         db_dataset.description = dataset.description
         db_dataset.meta_data = dataset.meta_data
+        db_dataset.is_active = dataset.is_active
         # 入力が None なら現在時刻を設定
         db_dataset.updated_at = (
             dataset.updated_at if dataset.updated_at else datetime.now()
@@ -170,6 +174,7 @@ class DatasetRepositorySQLAlchemy(DatasetRepository):
             name=db_dataset.name,
             description=db_dataset.description,
             meta_data=db_dataset.meta_data,
+            is_active=db_dataset.is_active,
             created_at=db_dataset.created_at,
             updated_at=db_dataset.updated_at,
         )

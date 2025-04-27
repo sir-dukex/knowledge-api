@@ -46,6 +46,7 @@ class DocumentRepositorySQLAlchemy(DocumentRepository):
             title=document.title,
             content=document.content,
             meta_data=document.meta_data,
+            is_active=document.is_active,
             created_at=document.created_at,
             updated_at=document.updated_at,
         )
@@ -59,6 +60,7 @@ class DocumentRepositorySQLAlchemy(DocumentRepository):
             title=db_document.title,
             content=db_document.content,
             meta_data=db_document.meta_data,
+            is_active=db_document.is_active,
             created_at=db_document.created_at,
             updated_at=db_document.updated_at,
         )
@@ -86,6 +88,7 @@ class DocumentRepositorySQLAlchemy(DocumentRepository):
             title=db_document.title,
             content=db_document.content,
             meta_data=db_document.meta_data,
+            is_active=db_document.is_active,
             created_at=db_document.created_at,
             updated_at=db_document.updated_at,
         )
@@ -127,6 +130,7 @@ class DocumentRepositorySQLAlchemy(DocumentRepository):
                 title=db_doc.title,
                 content=db_doc.content,
                 meta_data=db_doc.meta_data,
+                is_active=db_doc.is_active,
                 created_at=db_doc.created_at,
                 updated_at=db_doc.updated_at,
             )
@@ -155,6 +159,7 @@ class DocumentRepositorySQLAlchemy(DocumentRepository):
         db_document.title = document.title
         db_document.content = document.content
         db_document.meta_data = document.meta_data
+        db_document.is_active = document.is_active
         # updated_at が None の場合、現在時刻で補完
         db_document.updated_at = (
             document.updated_at if document.updated_at is not None else datetime.now()
@@ -168,6 +173,7 @@ class DocumentRepositorySQLAlchemy(DocumentRepository):
             title=db_document.title,
             content=db_document.content,
             meta_data=db_document.meta_data,
+            is_active=db_document.is_active,
             created_at=db_document.created_at,
             updated_at=db_document.updated_at,
         )

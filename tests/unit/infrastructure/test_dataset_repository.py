@@ -30,8 +30,10 @@ def test_create_dataset(test_session):
     """
     DatasetRepositorySQLAlchemy.create() のテスト
     新規に作成されたデータセットに ID やタイムスタンプが正しく設定されることを検証します。
+    is_activeの保存も検証
     """
     repo = DatasetRepositorySQLAlchemy(test_session)
+    # is_active True
     dataset = Dataset.create(
         name="Test Dataset", description="A test dataset", meta_data={"foo": "bar"}
     )
@@ -40,36 +42,46 @@ def test_create_dataset(test_session):
     assert result.name == "Test Dataset"
     assert result.description == "A test dataset"
     assert result.meta_data == {"foo": "bar"}
+    assert result.is_active is True
     assert isinstance(result.created_at, datetime)
     assert isinstance(result.updated_at, datetime)
+    # is_active False
+    dataset2 = Dataset.create(
+        name="Inactive Dataset", description="Inactive", meta_data={}, is_active=False
+    )
+    result2 = repo.create(dataset2)
+    assert result2.is_active is False
 
 
 def test_get_dataset(test_session):
     """
     DatasetRepositorySQLAlchemy.get_by_id() のテスト
     登録済みのデータセットが get_by_id() により正しく取得できることを検証します。
+    is_activeの取得も検証
     """
     repo = DatasetRepositorySQLAlchemy(test_session)
     dataset = Dataset.create(
-        name="Test Dataset Get", description="Dataset for get test", meta_data={}
+        name="Test Dataset Get", description="Dataset for get test", meta_data={}, is_active=False
     )
     created = repo.create(dataset)
     fetched = repo.get_by_id(created.id)
     assert fetched is not None
     assert fetched.id == created.id
     assert fetched.name == "Test Dataset Get"
+    assert fetched.is_active is False
 
 
 def test_list_datasets(test_session):
     """
     DatasetRepositorySQLAlchemy.list_datasets() のテスト
     同一データセット群を登録後、一覧取得が正しく行われることを検証します。
+    is_activeの値も検証
     """
     repo = DatasetRepositorySQLAlchemy(test_session)
     # 複数のデータセットを作成
     datasets = [
         Dataset.create(
-            name=f"Dataset {i}", description=f"Description {i}", meta_data={"index": i}
+            name=f"Dataset {i}", description=f"Description {i}", meta_data={"index": i}, is_active=(i % 2 == 0)
         )
         for i in range(3)
     ]
@@ -81,16 +93,20 @@ def test_list_datasets(test_session):
     names = {d.name for d in result}
     expected_names = {"Dataset 0", "Dataset 1", "Dataset 2"}
     assert names == expected_names
+    # is_activeの値も検証
+    for i, d in enumerate(sorted(result, key=lambda x: x.name)):
+        assert d.is_active == (i % 2 == 0)
 
 
 def test_update_dataset(test_session):
     """
     DatasetRepositorySQLAlchemy.update() のテスト
     作成されたデータセットの内容を更新し、更新後の値と updated_at の更新が反映されることを検証します。
+    is_activeの更新も検証
     """
     repo = DatasetRepositorySQLAlchemy(test_session)
     dataset = Dataset.create(
-        name="Old Dataset", description="Old description", meta_data={"old": True}
+        name="Old Dataset", description="Old description", meta_data={"old": True}, is_active=True
     )
     created = repo.create(dataset)
     # 更新時は created_at は変更せず、updated_at に現在時刻を補完する
@@ -99,6 +115,7 @@ def test_update_dataset(test_session):
         name="Updated Dataset",
         description="Updated description",
         meta_data={"new": True},
+        is_active=False,
         created_at=None,  # repository 実装側で元の値を利用する前提
         updated_at=datetime.now(),
     )
@@ -107,6 +124,7 @@ def test_update_dataset(test_session):
     assert updated.name == "Updated Dataset"
     assert updated.description == "Updated description"
     assert updated.meta_data == {"new": True}
+    assert updated.is_active is False
     assert updated.updated_at > created.updated_at
 
 

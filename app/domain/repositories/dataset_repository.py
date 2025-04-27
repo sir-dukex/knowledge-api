@@ -18,8 +18,18 @@ class DatasetRepository(ABC):
         pass
 
     @abstractmethod
-    def list_datasets(self, skip: int = 0, limit: int = 100) -> List[Dataset]:
-        """データセット一覧を取得"""
+    def list_datasets(self, skip: int = 0, limit: int = 100, is_active: Optional[bool] = None) -> List[Dataset]:
+        """
+        データセット一覧を取得
+
+        Args:
+            skip (int): スキップ件数
+            limit (int): 最大取得件数
+            is_active (Optional[bool]): 有効フラグでのフィルタ（Noneの場合は全件）
+
+        Returns:
+            List[Dataset]: データセットのリスト
+        """
         pass
 
     @abstractmethod

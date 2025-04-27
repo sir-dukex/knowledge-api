@@ -18,7 +18,7 @@ class CreateDocumentUseCase:
         self.dataset_repository = dataset_repository
 
     def execute(
-        self, dataset_id: str, title: str, content: str, meta_data: dict = None
+        self, dataset_id: str, title: str, content: str, meta_data: dict = None, is_active: bool = True
     ) -> Document:
         """
         新規ドキュメントを作成する。
@@ -29,6 +29,7 @@ class CreateDocumentUseCase:
             title (str): ドキュメントのタイトル
             content (str): ドキュメントの本文
             meta_data (dict, optional): 追加のメタ情報
+            is_active (bool): 有効フラグ（True:有効, False:無効）
 
         Returns:
             Document: 作成されたドキュメントエンティティ
@@ -50,6 +51,7 @@ class CreateDocumentUseCase:
                 name=title,  # document title と同じ名前
                 description="Auto-created from document creation",
                 meta_data={},
+                is_active=True,
             )
             dataset_id = dataset.id
 
@@ -59,5 +61,6 @@ class CreateDocumentUseCase:
             title=title,
             content=content,
             meta_data=meta_data,
+            is_active=is_active,
         )
         return self.document_repository.create(document)

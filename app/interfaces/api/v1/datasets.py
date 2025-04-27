@@ -47,6 +47,7 @@ def create_dataset(
             name=dataset_create.name,
             description=dataset_create.description,
             meta_data=dataset_create.meta_data,
+            is_active=dataset_create.is_active,
         )
         logger.info("Success: Dataset created with id=%s", dataset.id)
         return DatasetResponse(
@@ -54,6 +55,7 @@ def create_dataset(
             name=dataset.name,
             description=dataset.description,
             meta_data=dataset.meta_data,
+            is_active=dataset.is_active,
             created_at=dataset.created_at,
             updated_at=dataset.updated_at,
         )
@@ -91,6 +93,7 @@ def list_datasets(
                     name=ds.name,
                     description=ds.description,
                     meta_data=ds.meta_data,
+                    is_active=ds.is_active,
                     created_at=ds.created_at,
                     updated_at=ds.updated_at,
                 )
@@ -131,6 +134,7 @@ def get_dataset(dataset_id: str, session: Annotated[Session, Depends(get_db)]):
             name=dataset.name,
             description=dataset.description,
             meta_data=dataset.meta_data,
+            is_active=dataset.is_active,
             created_at=dataset.created_at,
             updated_at=dataset.updated_at,
         )
@@ -168,6 +172,7 @@ def update_dataset(
             name=dataset_update.name,
             description=dataset_update.description,
             meta_data=dataset_update.meta_data,
+            is_active=dataset_update.is_active,
         )
         logger.info("Success: Updated dataset with id=%s", dataset_id)
         return DatasetResponse(
@@ -175,6 +180,7 @@ def update_dataset(
             name=updated_dataset.name,
             description=updated_dataset.description,
             meta_data=updated_dataset.meta_data,
+            is_active=updated_dataset.is_active,
             created_at=updated_dataset.created_at,
             updated_at=updated_dataset.updated_at,
         )

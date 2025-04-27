@@ -39,7 +39,7 @@ else:
     LoggingInstrumentor().instrument(set_logging_format=True)
 
 from app.infrastructure.database.connection import init_db
-from app.interfaces.api.v1 import datasets, documents
+from app.interfaces.api.v1 import datasets, documents, knowledges
 
 # logging設定（uvicornの--log-configで適用するため、ここでは不要）
 
@@ -77,6 +77,7 @@ app.add_middleware(
 # ルーターの登録
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
 app.include_router(documents.router, prefix="/api/v1/documents", tags=["documents"])
+app.include_router(knowledges.router, prefix="/api/v1/knowledges", tags=["knowledges"])
 
 
 @app.get("/")

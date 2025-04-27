@@ -45,8 +45,19 @@ def test_create_document(test_session):
     assert result.title == "Test Document"
     assert result.content == "This is a test document."
     assert result.meta_data == {"key": "value"}
+    assert result.is_active is True
     assert isinstance(result.created_at, datetime)
     assert isinstance(result.updated_at, datetime)
+    # is_active False
+    doc2 = Document.create(
+        dataset_id="test-dataset-2",
+        title="Inactive Document",
+        content="Inactive content",
+        meta_data={},
+        is_active=False,
+    )
+    result2 = repo.create(doc2)
+    assert result2.is_active is False
 
 
 def test_get_document(test_session):
@@ -60,6 +71,7 @@ def test_get_document(test_session):
         title="Test Document",
         content="Document content.",
         meta_data={"a": 1},
+        is_active=False,
     )
     created = repo.create(doc)
     fetched = repo.get_by_id(created.id)
@@ -68,6 +80,7 @@ def test_get_document(test_session):
     assert fetched.title == "Test Document"
     assert fetched.content == "Document content."
     assert fetched.meta_data == {"a": 1}
+    assert fetched.is_active is False
 
 
 def test_list_documents(test_session):
@@ -82,6 +95,7 @@ def test_list_documents(test_session):
             title=f"Doc {i}",
             content=f"Content {i}",
             meta_data={"num": i},
+            is_active=(i % 2 == 0),
         )
         for i in range(3)
     ]
@@ -93,6 +107,9 @@ def test_list_documents(test_session):
     titles = {d.title for d in result}
     expected_titles = {"Doc 0", "Doc 1", "Doc 2"}
     assert titles == expected_titles
+    # is_activeの値も検証
+    for i, d in enumerate(sorted(result, key=lambda x: x.title)):
+        assert d.is_active == (i % 2 == 0)
 
 
 def test_update_document(test_session):
@@ -115,6 +132,7 @@ def test_update_document(test_session):
         title="New Title",
         content="New Content",
         meta_data={"new": True},
+        is_active=False,
         created_at=None,
         updated_at=datetime.now(),
     )
@@ -123,6 +141,7 @@ def test_update_document(test_session):
     assert updated.title == "New Title"
     assert updated.content == "New Content"
     assert updated.meta_data == {"new": True}
+    assert updated.is_active is False
     assert updated.updated_at > created.updated_at
 
 

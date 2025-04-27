@@ -69,6 +69,7 @@ def test_create_document_api(client, dummy_document):
             title="Sample Document",
             content="Sample content",
             meta_data={"test": True},
+            is_active=True,
         )
 
 
@@ -112,12 +113,13 @@ def test_update_document_api(client, dummy_document):
         assert response.status_code == 200
         result = response.json()
         assert result["id"] == "doc-123"
-        mock_usecase.assert_called_once_with(
-            document_id="doc-123",
-            title="Updated Document",
-            content="Updated content",
-            meta_data={"updated": True},
-        )
+    mock_usecase.assert_called_once_with(
+        document_id="doc-123",
+        title="Updated Document",
+        content="Updated content",
+        meta_data={"updated": True},
+        is_active=None,
+    )
 
 
 def test_delete_document_api(client):

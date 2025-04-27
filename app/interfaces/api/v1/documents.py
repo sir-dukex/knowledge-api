@@ -48,6 +48,7 @@ def create_document(
             title=document_create.title,
             content=document_create.content,
             meta_data=document_create.meta_data,
+            is_active=document_create.is_active,
         )
         logger.info("Success: Document created with id=%s", document.id)
         return DocumentResponse(
@@ -56,6 +57,7 @@ def create_document(
             title=document.title,
             content=document.content,
             meta_data=document.meta_data,
+            is_active=document.is_active,
             created_at=document.created_at,
             updated_at=document.updated_at,
         )
@@ -100,6 +102,7 @@ def list_documents(
                     title=document.title,
                     content=document.content,
                     meta_data=document.meta_data,
+                    is_active=document.is_active,
                     created_at=document.created_at,
                     updated_at=document.updated_at,
                 )
@@ -136,6 +139,7 @@ def get_document(document_id: str, session: Annotated[Session, Depends(get_db)])
             title=document.title,
             content=document.content,
             meta_data=document.meta_data,
+            is_active=document.is_active,
             created_at=document.created_at,
             updated_at=document.updated_at,
         )
@@ -173,6 +177,7 @@ def update_document(
             title=document_update.title,
             content=document_update.content,
             meta_data=document_update.meta_data,
+            is_active=document_update.is_active,
         )
         logger.info("Success: Updated document with id=%s", document_id)
         return DocumentResponse(
@@ -181,6 +186,7 @@ def update_document(
             title=updated_document.title,
             content=updated_document.content,
             meta_data=updated_document.meta_data,
+            is_active=updated_document.is_active,
             created_at=updated_document.created_at,
             updated_at=updated_document.updated_at,
         )
