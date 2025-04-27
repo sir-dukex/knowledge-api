@@ -9,17 +9,16 @@ from app.infrastructure.database.connection import Base
 
 class KnowledgeModel(Base):
     """
-    Knowledge（ページネーション情報）のデータベースモデル
+    Knowledge（ナレッジ情報）のデータベースモデル
 
-    1つのドキュメントに複数のKnowledge（ページ情報）が紐付く構造。
-    各Knowledgeはページ番号、画像パス、テキスト等を保持する。
+    1つのドキュメントに複数のKnowledge（ナレッジ要素）が紐付く構造。
+    各Knowledgeは順番、テキスト等を保持する。
 
     Attributes:
         id: Knowledge ID
         document_id: 紐付くドキュメントID
-        page_number: ページ番号
-        image_path: S3上の画像パス
-        page_text: ページから抽出したテキスト
+        sequence: ナレッジの順番（0始まりのインデックス）
+        knowledge_text: ナレッジ本文
         meta_data: メタデータ
         is_active: 有効フラグ（True:有効, False:無効）
         created_at: 作成日時
@@ -32,9 +31,8 @@ class KnowledgeModel(Base):
     document_id = Column(
         String(36), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False
     )
-    page_number = Column(Integer, nullable=False)
-    image_path = Column(String(512), nullable=False)
-    page_text = Column(Text, nullable=False)
+    sequence = Column(Integer, nullable=False)
+    knowledge_text = Column(Text, nullable=False)
     meta_data = Column(JSON, nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)

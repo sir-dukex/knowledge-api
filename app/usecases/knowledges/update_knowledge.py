@@ -4,7 +4,7 @@ from app.domain.repositories.knowledge_repository import KnowledgeRepository
 
 class UpdateKnowledgeUseCase:
     """
-    Knowledge（ページ情報）更新ユースケース
+    Knowledge（ナレッジ情報）更新ユースケース
     """
 
     def __init__(self, knowledge_repository: KnowledgeRepository):
@@ -18,7 +18,7 @@ class UpdateKnowledgeUseCase:
 
     def execute(self, knowledge: Knowledge) -> Knowledge:
         """
-        Knowledge（ページ情報）を更新する
+        Knowledge（ナレッジ情報）を更新する
 
         Args:
             knowledge (Knowledge): 更新対象のKnowledgeエンティティ（ID必須）

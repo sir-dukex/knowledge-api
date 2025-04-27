@@ -28,15 +28,14 @@ def create_knowledge(
     """
     新規Knowledge（ページ情報）を作成するエンドポイント
     """
-    logger.info("Start: Creating new knowledge for document_id=%s, page_number=%d", knowledge_create.document_id, knowledge_create.page_number)
+    logger.info("Start: Creating new knowledge for document_id=%s, sequence=%d", knowledge_create.document_id, knowledge_create.sequence)
     try:
         repo = KnowledgeRepositorySQLAlchemy(session)
         usecase = CreateKnowledgeUseCase(repo)
         knowledge = usecase.execute(
             document_id=knowledge_create.document_id,
-            page_number=knowledge_create.page_number,
-            image_path=knowledge_create.image_path,
-            page_text=knowledge_create.page_text,
+            sequence=knowledge_create.sequence,
+            knowledge_text=knowledge_create.knowledge_text,
             meta_data=knowledge_create.meta_data,
             is_active=knowledge_create.is_active,
         )
@@ -44,9 +43,8 @@ def create_knowledge(
         return KnowledgeResponse(
             id=knowledge.id,
             document_id=knowledge.document_id,
-            page_number=knowledge.page_number,
-            image_path=knowledge.image_path,
-            page_text=knowledge.page_text,
+            sequence=knowledge.sequence,
+            knowledge_text=knowledge.knowledge_text,
             meta_data=knowledge.meta_data,
             is_active=knowledge.is_active,
             created_at=knowledge.created_at,
@@ -79,9 +77,8 @@ def list_knowledges(
                 KnowledgeResponse(
                     id=k.id,
                     document_id=k.document_id,
-                    page_number=k.page_number,
-                    image_path=k.image_path,
-                    page_text=k.page_text,
+                    sequence=k.sequence,
+                    knowledge_text=k.knowledge_text,
                     meta_data=k.meta_data,
                     is_active=k.is_active,
                     created_at=k.created_at,
@@ -118,9 +115,8 @@ def get_knowledge(knowledge_id: str, session: Annotated[Session, Depends(get_db)
     return KnowledgeResponse(
         id=knowledge.id,
         document_id=knowledge.document_id,
-        page_number=knowledge.page_number,
-        image_path=knowledge.image_path,
-        page_text=knowledge.page_text,
+        sequence=knowledge.sequence,
+        knowledge_text=knowledge.knowledge_text,
         meta_data=knowledge.meta_data,
         is_active=knowledge.is_active,
         created_at=knowledge.created_at,
@@ -146,12 +142,10 @@ def update_knowledge(
             logger.error("Error: Knowledge not found for update with id=%s", knowledge_id)
             raise HTTPException(status_code=404, detail="Knowledge not found")
         # 更新内容を反映
-        if knowledge_update.page_number is not None:
-            knowledge.page_number = knowledge_update.page_number
-        if knowledge_update.image_path is not None:
-            knowledge.image_path = knowledge_update.image_path
-        if knowledge_update.page_text is not None:
-            knowledge.page_text = knowledge_update.page_text
+        if knowledge_update.sequence is not None:
+            knowledge.sequence = knowledge_update.sequence
+        if knowledge_update.knowledge_text is not None:
+            knowledge.knowledge_text = knowledge_update.knowledge_text
         if knowledge_update.meta_data is not None:
             knowledge.meta_data = knowledge_update.meta_data
         if knowledge_update.is_active is not None:
@@ -162,9 +156,8 @@ def update_knowledge(
         return KnowledgeResponse(
             id=updated_knowledge.id,
             document_id=updated_knowledge.document_id,
-            page_number=updated_knowledge.page_number,
-            image_path=updated_knowledge.image_path,
-            page_text=updated_knowledge.page_text,
+            sequence=updated_knowledge.sequence,
+            knowledge_text=updated_knowledge.knowledge_text,
             meta_data=updated_knowledge.meta_data,
             is_active=updated_knowledge.is_active,
             created_at=updated_knowledge.created_at,

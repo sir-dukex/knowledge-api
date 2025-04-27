@@ -43,15 +43,14 @@ def create_document(client, dataset_id: str) -> dict:
     return resp.json()
 
 
-def create_knowledge(client, document_id: str, page_number: int = 1, is_active: bool = True) -> dict:
+def create_knowledge(client, document_id: str, sequence: int = 1, is_active: bool = True) -> dict:
     """
-    Knowledge（ページ情報）を作成して結果を返すヘルパー関数
+    Knowledge（ナレッジ情報）を作成して結果を返すヘルパー関数
     """
     payload = {
         "document_id": document_id,
-        "page_number": page_number,
-        "image_path": f"s3://test-bucket/{document_id}/{page_number}.png",
-        "page_text": f"Test page text {page_number}",
+        "sequence": sequence,
+        "knowledge_text": f"Test knowledge text {sequence}",
         "meta_data": {"test_key": "test_value"},
         "is_active": is_active,
     }
@@ -62,19 +61,19 @@ def create_knowledge(client, document_id: str, page_number: int = 1, is_active: 
 
 def test_create_knowledge(client):
     """
-    Knowledge（ページ情報）を新規作成する統合テスト
+    Knowledge（ナレッジ情報）を新規作成する統合テスト
     """
     dataset = create_dataset(client, "KnowledgeCreateCase")
     document = create_document(client, dataset_id=dataset["id"])
-    knowledge = create_knowledge(client, document_id=document["id"], page_number=1)
+    knowledge = create_knowledge(client, document_id=document["id"], sequence=1)
     assert knowledge["document_id"] == document["id"]
-    assert knowledge["page_number"] == 1
-    assert "Test page text" in knowledge["page_text"]
+    assert knowledge["sequence"] == 1
+    assert "Test knowledge text" in knowledge["knowledge_text"]
     assert knowledge["meta_data"]["test_key"] == "test_value"
     assert knowledge["is_active"] is True
 
     # is_active=Falseで作成
-    knowledge2 = create_knowledge(client, document_id=document["id"], page_number=2, is_active=False)
+    knowledge2 = create_knowledge(client, document_id=document["id"], sequence=2, is_active=False)
     assert knowledge2["is_active"] is False
 
 
@@ -84,14 +83,14 @@ def test_get_knowledge(client):
     """
     dataset = create_dataset(client, "KnowledgeGetCase")
     document = create_document(client, dataset_id=dataset["id"])
-    knowledge = create_knowledge(client, document_id=document["id"], page_number=2)
+    knowledge = create_knowledge(client, document_id=document["id"], sequence=2)
     knowledge_id = knowledge["id"]
 
     resp = client.get(f"/api/v1/knowledges/{knowledge_id}")
     assert resp.status_code == 200
     get_data = resp.json()
     assert get_data["id"] == knowledge_id
-    assert get_data["page_number"] == 2
+    assert get_data["sequence"] == 2
     assert get_data["is_active"] is True
 
 
@@ -101,18 +100,18 @@ def test_list_knowledges(client):
     """
     dataset = create_dataset(client, "KnowledgeListCase")
     document = create_document(client, dataset_id=dataset["id"])
-    # 3ページ分作成
+    # 3つ分作成
     for i in range(1, 4):
-        create_knowledge(client, document_id=document["id"], page_number=i, is_active=(i % 2 == 0))
+        create_knowledge(client, document_id=document["id"], sequence=i, is_active=(i % 2 == 0))
 
     resp = client.get(f"/api/v1/knowledges/?document_id={document['id']}")
     assert resp.status_code == 200
     data = resp.json()
     assert data["total"] == 3
-    page_numbers = [item["page_number"] for item in data["items"]]
-    assert set(page_numbers) == {1, 2, 3}
+    sequences = [item["sequence"] for item in data["items"]]
+    assert set(sequences) == {1, 2, 3}
     # is_activeの値も検証
-    for i, item in enumerate(sorted(data["items"], key=lambda x: x["page_number"]), 1):
+    for i, item in enumerate(sorted(data["items"], key=lambda x: x["sequence"]), 1):
         assert item["is_active"] == (i % 2 == 0)
 
 
@@ -122,13 +121,12 @@ def test_update_knowledge(client):
     """
     dataset = create_dataset(client, "KnowledgeUpdateCase")
     document = create_document(client, dataset_id=dataset["id"])
-    knowledge = create_knowledge(client, document_id=document["id"], page_number=5)
+    knowledge = create_knowledge(client, document_id=document["id"], sequence=5)
     knowledge_id = knowledge["id"]
 
     update_payload = {
-        "page_number": 10,
-        "image_path": "s3://test-bucket/updated.png",
-        "page_text": "Updated page text",
+        "sequence": 10,
+        "knowledge_text": "Updated knowledge text",
         "meta_data": {"updated": True},
         "is_active": False,
     }
@@ -136,9 +134,8 @@ def test_update_knowledge(client):
     assert resp.status_code == 200
     updated = resp.json()
     assert updated["id"] == knowledge_id
-    assert updated["page_number"] == 10
-    assert updated["image_path"] == "s3://test-bucket/updated.png"
-    assert updated["page_text"] == "Updated page text"
+    assert updated["sequence"] == 10
+    assert updated["knowledge_text"] == "Updated knowledge text"
     assert updated["meta_data"]["updated"] is True
     assert updated["is_active"] is False
 
@@ -149,7 +146,7 @@ def test_delete_knowledge(client):
     """
     dataset = create_dataset(client, "KnowledgeDeleteCase")
     document = create_document(client, dataset_id=dataset["id"])
-    knowledge = create_knowledge(client, document_id=document["id"], page_number=7)
+    knowledge = create_knowledge(client, document_id=document["id"], sequence=7)
     knowledge_id = knowledge["id"]
 
     resp = client.delete(f"/api/v1/knowledges/{knowledge_id}")

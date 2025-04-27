@@ -45,17 +45,15 @@ def test_create_knowledge(test_session):
     # is_active True
     knowledge = Knowledge.create(
         document_id=doc.id,
-        page_number=1,
-        image_path="s3://bucket/doc/1.png",
-        page_text="Page 1 text",
+        sequence=1,
+        knowledge_text="Knowledge 1 text",
         meta_data={"k": 1},
     )
     result = repo.create(knowledge)
     assert result.id is not None
     assert result.document_id == doc.id
-    assert result.page_number == 1
-    assert result.image_path == "s3://bucket/doc/1.png"
-    assert result.page_text == "Page 1 text"
+    assert result.sequence == 1
+    assert result.knowledge_text == "Knowledge 1 text"
     assert result.meta_data == {"k": 1}
     assert result.is_active is True
     assert isinstance(result.created_at, datetime)
@@ -63,9 +61,8 @@ def test_create_knowledge(test_session):
     # is_active False
     knowledge2 = Knowledge.create(
         document_id=doc.id,
-        page_number=2,
-        image_path="s3://bucket/doc/2.png",
-        page_text="Inactive",
+        sequence=2,
+        knowledge_text="Inactive",
         meta_data={},
         is_active=False,
     )
@@ -78,9 +75,8 @@ def test_get_knowledge(test_session):
     doc = create_document_for_knowledge(test_session)
     knowledge = Knowledge.create(
         document_id=doc.id,
-        page_number=2,
-        image_path="s3://bucket/doc/2.png",
-        page_text="Page 2 text",
+        sequence=2,
+        knowledge_text="Knowledge 2 text",
         meta_data={"k": 2},
         is_active=False,
     )
@@ -88,8 +84,8 @@ def test_get_knowledge(test_session):
     fetched = repo.get_by_id(created.id)
     assert fetched is not None
     assert fetched.id == created.id
-    assert fetched.page_number == 2
-    assert fetched.page_text == "Page 2 text"
+    assert fetched.sequence == 2
+    assert fetched.knowledge_text == "Knowledge 2 text"
     assert fetched.meta_data == {"k": 2}
     assert fetched.is_active is False
 
@@ -100,9 +96,8 @@ def test_list_knowledges(test_session):
     knowledges = [
         Knowledge.create(
             document_id=doc.id,
-            page_number=i,
-            image_path=f"s3://bucket/doc/{i}.png",
-            page_text=f"Page {i} text",
+            sequence=i,
+            knowledge_text=f"Knowledge {i} text",
             meta_data={"k": i},
             is_active=(i % 2 == 0),
         )
@@ -113,10 +108,10 @@ def test_list_knowledges(test_session):
 
     result = repo.list_knowledges(document_id=doc.id, skip=0, limit=10)
     assert len(result) == 3
-    page_numbers = {k.page_number for k in result}
-    assert page_numbers == {1, 2, 3}
+    sequences = {k.sequence for k in result}
+    assert sequences == {1, 2, 3}
     # is_activeの値も検証
-    for i, k in enumerate(sorted(result, key=lambda x: x.page_number), 1):
+    for i, k in enumerate(sorted(result, key=lambda x: x.sequence), 1):
         assert k.is_active == (i % 2 == 0)
 
 
@@ -125,18 +120,16 @@ def test_update_knowledge(test_session):
     doc = create_document_for_knowledge(test_session)
     knowledge = Knowledge.create(
         document_id=doc.id,
-        page_number=5,
-        image_path="s3://bucket/doc/5.png",
-        page_text="Old text",
+        sequence=5,
+        knowledge_text="Old text",
         meta_data={"old": True},
     )
     created = repo.create(knowledge)
     updated_input = Knowledge(
         id=created.id,
         document_id=created.document_id,
-        page_number=10,
-        image_path="s3://bucket/doc/updated.png",
-        page_text="Updated text",
+        sequence=10,
+        knowledge_text="Updated text",
         meta_data={"new": True},
         is_active=False,
         created_at=None,
@@ -144,9 +137,8 @@ def test_update_knowledge(test_session):
     )
     updated = repo.update(updated_input)
     assert updated.id == created.id
-    assert updated.page_number == 10
-    assert updated.image_path == "s3://bucket/doc/updated.png"
-    assert updated.page_text == "Updated text"
+    assert updated.sequence == 10
+    assert updated.knowledge_text == "Updated text"
     assert updated.meta_data == {"new": True}
     assert updated.is_active is False
     assert updated.updated_at > created.updated_at
@@ -157,9 +149,8 @@ def test_delete_knowledge(test_session):
     doc = create_document_for_knowledge(test_session)
     knowledge = Knowledge.create(
         document_id=doc.id,
-        page_number=7,
-        image_path="s3://bucket/doc/7.png",
-        page_text="To delete",
+        sequence=7,
+        knowledge_text="To delete",
         meta_data={},
     )
     created = repo.create(knowledge)

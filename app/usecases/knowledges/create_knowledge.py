@@ -19,20 +19,18 @@ class CreateKnowledgeUseCase:
     def execute(
         self,
         document_id: str,
-        page_number: int,
-        image_path: str,
-        page_text: str,
+        sequence: int,
+        knowledge_text: str,
         meta_data: dict = None,
         is_active: bool = True,
     ) -> Knowledge:
         """
-        新規Knowledge（ページ情報）を作成する
+        新規Knowledge（ナレッジ情報）を作成する
 
         Args:
             document_id (str): 紐付くドキュメントID
-            page_number (int): ページ番号
-            image_path (str): S3上の画像パス
-            page_text (str): ページから抽出したテキスト
+            sequence (int): ナレッジの順番（0始まりのインデックス）
+            knowledge_text (str): ナレッジ本文
             meta_data (dict, optional): 追加情報
             is_active (bool): 有効フラグ（True:有効, False:無効）
 
@@ -41,9 +39,8 @@ class CreateKnowledgeUseCase:
         """
         knowledge = Knowledge.create(
             document_id=document_id,
-            page_number=page_number,
-            image_path=image_path,
-            page_text=page_text,
+            sequence=sequence,
+            knowledge_text=knowledge_text,
             meta_data=meta_data,
             is_active=is_active,
         )

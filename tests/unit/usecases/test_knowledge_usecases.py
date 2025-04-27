@@ -17,9 +17,8 @@ class TestCreateKnowledgeUseCase:
         dummy_knowledge = Knowledge(
             id="k-123",
             document_id="doc-abc",
-            page_number=1,
-            image_path="s3://bucket/doc-abc/1.png",
-            page_text="Test page text",
+            sequence=1,
+            knowledge_text="Test knowledge text",
             meta_data={"key": "value"},
             created_at=datetime.now(),
             updated_at=datetime.now(),
@@ -29,15 +28,14 @@ class TestCreateKnowledgeUseCase:
         usecase = CreateKnowledgeUseCase(mock_repo)
         result = usecase.execute(
             document_id="doc-abc",
-            page_number=1,
-            image_path="s3://bucket/doc-abc/1.png",
-            page_text="Test page text",
+            sequence=1,
+            knowledge_text="Test knowledge text",
             meta_data={"key": "value"},
         )
         mock_repo.create.assert_called_once()
         assert result.id == "k-123"
         assert result.document_id == "doc-abc"
-        assert result.page_number == 1
+        assert result.sequence == 1
 
 
 class TestUpdateKnowledgeUseCase:
@@ -46,9 +44,8 @@ class TestUpdateKnowledgeUseCase:
         updated_knowledge = Knowledge(
             id="k-456",
             document_id="doc-abc",
-            page_number=2,
-            image_path="s3://bucket/doc-abc/2.png",
-            page_text="Updated text",
+            sequence=2,
+            knowledge_text="Updated text",
             meta_data={"key": "updated"},
             created_at=datetime.now(),
             updated_at=datetime.now(),
@@ -59,8 +56,8 @@ class TestUpdateKnowledgeUseCase:
         result = usecase.execute(updated_knowledge)
         mock_repo.update.assert_called_once()
         assert result.id == "k-456"
-        assert result.page_number == 2
-        assert result.page_text == "Updated text"
+        assert result.sequence == 2
+        assert result.knowledge_text == "Updated text"
 
 
 class TestDeleteKnowledgeUseCase:
@@ -89,9 +86,8 @@ class TestListKnowledgesUseCase:
         k1 = Knowledge(
             id="k-1",
             document_id="doc-xyz",
-            page_number=1,
-            image_path="s3://bucket/doc-xyz/1.png",
-            page_text="Page 1",
+            sequence=1,
+            knowledge_text="Knowledge 1",
             meta_data={},
             created_at=datetime.now(),
             updated_at=datetime.now(),
@@ -99,9 +95,8 @@ class TestListKnowledgesUseCase:
         k2 = Knowledge(
             id="k-2",
             document_id="doc-xyz",
-            page_number=2,
-            image_path="s3://bucket/doc-xyz/2.png",
-            page_text="Page 2",
+            sequence=2,
+            knowledge_text="Knowledge 2",
             meta_data={},
             created_at=datetime.now(),
             updated_at=datetime.now(),
@@ -121,9 +116,8 @@ class TestGetKnowledgeUseCase:
         dummy_knowledge = Knowledge(
             id="k-001",
             document_id="doc-abc",
-            page_number=1,
-            image_path="s3://bucket/doc-abc/1.png",
-            page_text="Some text",
+            sequence=1,
+            knowledge_text="Some text",
             meta_data={"test": True},
             created_at=datetime.now(),
             updated_at=datetime.now(),
@@ -133,7 +127,7 @@ class TestGetKnowledgeUseCase:
         result = usecase.execute("k-001")
         mock_repo.get_by_id.assert_called_once_with("k-001")
         assert result.id == "k-001"
-        assert result.page_text == "Some text"
+        assert result.knowledge_text == "Some text"
 
     def test_execute_not_found(self):
         mock_repo = Mock()

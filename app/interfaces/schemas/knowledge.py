@@ -6,21 +6,19 @@ from pydantic import BaseModel, Field
 
 class KnowledgeBase(BaseModel):
     """
-    Knowledge（ページ情報）の共通スキーマ
+    Knowledge（ナレッジ情報）の共通スキーマ
 
     Attributes:
         document_id: 紐付くドキュメントID
-        page_number: ページ番号
-        image_path: ストレージ上の画像パス
-        page_text: ページから抽出したテキスト
+        sequence: ナレッジの順番（0始まりのインデックス）
+        knowledge_text: ナレッジ本文
         meta_data: 追加情報
         is_active: 有効フラグ（True:有効, False:無効）
     """
 
     document_id: str = Field(..., description="紐付くドキュメントID")
-    page_number: int = Field(..., description="ページ番号")
-    image_path: str = Field(..., description="ストレージ上の画像パス")
-    page_text: str = Field(..., description="ページから抽出したテキスト")
+    sequence: int = Field(..., description="ナレッジの順番（0始まりのインデックス）")
+    knowledge_text: str = Field(..., description="ナレッジ本文")
     meta_data: Optional[Dict[str, Any]] = Field(default_factory=dict, description="追加情報")
     is_active: bool = Field(True, description="有効フラグ（True:有効, False:無効）")
 
@@ -35,16 +33,14 @@ class KnowledgeUpdate(BaseModel):
     Knowledge更新用スキーマ
 
     Attributes:
-        page_number: ページ番号
-        image_path: ストレージ上の画像パス
-        page_text: ページから抽出したテキスト
+        sequence: ナレッジの順番（0始まりのインデックス）
+        knowledge_text: ナレッジ本文
         meta_data: 追加情報
         is_active: 有効フラグ（True:有効, False:無効）
     """
 
-    page_number: Optional[int] = Field(None, description="ページ番号")
-    image_path: Optional[str] = Field(None, description="ストレージ上の画像パス")
-    page_text: Optional[str] = Field(None, description="ページから抽出したテキスト")
+    sequence: Optional[int] = Field(None, description="ナレッジの順番（0始まりのインデックス）")
+    knowledge_text: Optional[str] = Field(None, description="ナレッジ本文")
     meta_data: Optional[Dict[str, Any]] = Field(default_factory=dict, description="追加情報")
     is_active: Optional[bool] = Field(None, description="有効フラグ（True:有効, False:無効）")
 

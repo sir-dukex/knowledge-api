@@ -38,13 +38,12 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
         Returns:
             Knowledge: 作成されたKnowledgeエンティティ
         """
-        logger.info("Start: Creating knowledge for document_id=%s, page_number=%d", knowledge.document_id, knowledge.page_number)
+        logger.info("Start: Creating knowledge for document_id=%s, sequence=%d", knowledge.document_id, knowledge.sequence)
         db_knowledge = KnowledgeModel(
             id=str(uuid.uuid4()) if not knowledge.id else knowledge.id,
             document_id=knowledge.document_id,
-            page_number=knowledge.page_number,
-            image_path=knowledge.image_path,
-            page_text=knowledge.page_text,
+            sequence=knowledge.sequence,
+            knowledge_text=knowledge.knowledge_text,
             meta_data=knowledge.meta_data,
             is_active=knowledge.is_active,
             created_at=knowledge.created_at,
@@ -57,9 +56,8 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
         return Knowledge(
             id=db_knowledge.id,
             document_id=db_knowledge.document_id,
-            page_number=db_knowledge.page_number,
-            image_path=db_knowledge.image_path,
-            page_text=db_knowledge.page_text,
+            sequence=db_knowledge.sequence,
+            knowledge_text=db_knowledge.knowledge_text,
             meta_data=db_knowledge.meta_data,
             is_active=db_knowledge.is_active,
             created_at=db_knowledge.created_at,
@@ -86,9 +84,8 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
         return Knowledge(
             id=db_knowledge.id,
             document_id=db_knowledge.document_id,
-            page_number=db_knowledge.page_number,
-            image_path=db_knowledge.image_path,
-            page_text=db_knowledge.page_text,
+            sequence=db_knowledge.sequence,
+            knowledge_text=db_knowledge.knowledge_text,
             meta_data=db_knowledge.meta_data,
             is_active=db_knowledge.is_active,
             created_at=db_knowledge.created_at,
@@ -118,7 +115,7 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
         stmt = (
             select(KnowledgeModel)
             .where(KnowledgeModel.document_id == document_id)
-            .order_by(KnowledgeModel.page_number)
+            .order_by(KnowledgeModel.sequence)
             .offset(skip)
             .limit(limit)
         )
@@ -129,9 +126,8 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
             Knowledge(
                 id=db_knowledge.id,
                 document_id=db_knowledge.document_id,
-                page_number=db_knowledge.page_number,
-                image_path=db_knowledge.image_path,
-                page_text=db_knowledge.page_text,
+                sequence=db_knowledge.sequence,
+                knowledge_text=db_knowledge.knowledge_text,
                 meta_data=db_knowledge.meta_data,
                 is_active=db_knowledge.is_active,
                 created_at=db_knowledge.created_at,
@@ -159,9 +155,8 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
         if not db_knowledge:
             logger.error("Error: Knowledge not found for update with id=%s", knowledge.id)
             raise ValueError(f"Knowledge with id {knowledge.id} not found")
-        db_knowledge.page_number = knowledge.page_number
-        db_knowledge.image_path = knowledge.image_path
-        db_knowledge.page_text = knowledge.page_text
+        db_knowledge.sequence = knowledge.sequence
+        db_knowledge.knowledge_text = knowledge.knowledge_text
         db_knowledge.meta_data = knowledge.meta_data
         db_knowledge.is_active = knowledge.is_active
         db_knowledge.updated_at = (
@@ -173,9 +168,8 @@ class KnowledgeRepositorySQLAlchemy(KnowledgeRepository):
         return Knowledge(
             id=db_knowledge.id,
             document_id=db_knowledge.document_id,
-            page_number=db_knowledge.page_number,
-            image_path=db_knowledge.image_path,
-            page_text=db_knowledge.page_text,
+            sequence=db_knowledge.sequence,
+            knowledge_text=db_knowledge.knowledge_text,
             meta_data=db_knowledge.meta_data,
             is_active=db_knowledge.is_active,
             created_at=db_knowledge.created_at,

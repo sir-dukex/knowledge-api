@@ -9,14 +9,12 @@ def test_create_knowledge_default():
     """
     knowledge = Knowledge.create(
         document_id="doc-1",
-        page_number=1,
-        image_path="s3://bucket/1.png",
-        page_text="テストページ",
+        sequence=1,
+        knowledge_text="テストナレッジ",
     )
     assert knowledge.document_id == "doc-1"
-    assert knowledge.page_number == 1
-    assert knowledge.image_path == "s3://bucket/1.png"
-    assert knowledge.page_text == "テストページ"
+    assert knowledge.sequence == 1
+    assert knowledge.knowledge_text == "テストナレッジ"
     assert knowledge.meta_data == {}
     assert knowledge.is_active is True
     assert isinstance(knowledge.created_at, datetime)
@@ -29,9 +27,8 @@ def test_create_knowledge_inactive():
     """
     knowledge = Knowledge.create(
         document_id="doc-2",
-        page_number=2,
-        image_path="s3://bucket/2.png",
-        page_text="無効ページ",
+        sequence=2,
+        knowledge_text="無効ナレッジ",
         is_active=False,
     )
     assert knowledge.is_active is False
