@@ -43,10 +43,25 @@ from app.interfaces.api.v1 import datasets, documents
 
 # logging設定（uvicornの--log-configで適用するため、ここでは不要）
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app):
+    """
+    アプリケーションの起動・終了時の処理を管理するlifespanイベントハンドラ
+    """
+    # アプリケーション起動時の処理
+    init_db()
+    logging.info("Database initialized on startup.")
+    yield
+    # アプリケーション終了時の処理（必要に応じて追加）
+
+# FastAPIアプリケーションの生成（lifespanを指定）
 app = FastAPI(
     title="Knowledge API",
     description="DifyライクなナレッジベースシステムのバックエンドAPI",
     version="0.1.0",
+    lifespan=lifespan,
 )
 FastAPIInstrumentor.instrument_app(app)
 
@@ -62,12 +77,6 @@ app.add_middleware(
 # ルーターの登録
 app.include_router(datasets.router, prefix="/api/v1/datasets", tags=["datasets"])
 app.include_router(documents.router, prefix="/api/v1/documents", tags=["documents"])
-
-
-@app.on_event("startup")
-def startup():
-    """アプリケーション起動時の処理"""
-    init_db()
 
 
 @app.get("/")

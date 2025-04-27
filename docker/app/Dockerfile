@@ -13,10 +13,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# 開発環境の依存関係をインストール
-COPY requirements-dev.txt .
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements-dev.txt
+# poetry設定ファイルをコピー
+COPY pyproject.toml poetry.lock ./
+
+RUN pip install poetry
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-root --with dev
 
 # アプリケーションコードをコピー
 COPY . .
