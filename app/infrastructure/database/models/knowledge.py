@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Text, Boolean
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String, Text, Boolean, UnicodeText
 
 from app.infrastructure.database.connection import Base
 
@@ -32,7 +32,7 @@ class KnowledgeModel(Base):
         String(36), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False
     )
     sequence = Column(Integer, nullable=False)
-    knowledge_text = Column(Text, nullable=False)
+    knowledge_text = Column(UnicodeText, nullable=False)
     meta_data = Column(JSON, nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)

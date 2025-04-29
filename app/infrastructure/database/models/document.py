@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, Column, DateTime, ForeignKey, String, Text, Boolean
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, String, Text, Boolean, Unicode, UnicodeText
 
 from app.infrastructure.database.connection import Base
 
@@ -31,8 +31,8 @@ class DocumentModel(Base):
     dataset_id = Column(
         String(36), ForeignKey("datasets.id", ondelete="CASCADE"), nullable=False
     )
-    title = Column(String(255), nullable=False)
-    content = Column(Text, nullable=False)
+    title = Column(Unicode(255), nullable=False)
+    content = Column(UnicodeText, nullable=False)
     meta_data = Column(JSON, nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)

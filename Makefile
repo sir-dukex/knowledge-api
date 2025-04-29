@@ -139,7 +139,7 @@ alembic-init:
 	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic init migrations
 
 alembic-revision:
-	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic revision --autogenerate -m "initial migration"
+	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic revision --autogenerate -m "Make columns Unicode for Japanese support"
 
 alembic-upgrade:
 	$(COMPOSE_DEV) run --rm $(APP_DEV) alembic upgrade head

@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, Column, DateTime, String, Text, Boolean
+from sqlalchemy import JSON, Column, DateTime, String, Text, Boolean, Unicode, UnicodeText
 
 from app.infrastructure.database.connection import Base
 
@@ -24,8 +24,8 @@ class DatasetModel(Base):
     __tablename__ = "datasets"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String(255), nullable=False)
-    description = Column(Text, nullable=True)
+    name = Column(Unicode(255), nullable=False)
+    description = Column(UnicodeText, nullable=True)
     meta_data = Column(JSON, nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)
